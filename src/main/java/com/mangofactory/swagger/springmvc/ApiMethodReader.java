@@ -85,19 +85,26 @@ public class ApiMethodReader {
 		for (MethodParameter methodParameter : handlerMethod.getMethodParameters())
 		{
 			ApiParam apiParam = methodParameter.getParameterAnnotation(ApiParam.class);
-			if (apiParam == null)
-			{
+			RequestParam requestParam = methodParameter.getParameterAnnotation(RequestParam.class);
+			
+			String paramType = (requestParam == null ? "path" : "query");
+
+			if (apiParam == null) {
 				log.warn("{} is missing @ApiParam annotation - so generating default documentation", 
                          methodParameter.getMethod());
+				
 				generateDefaultParameterDocumentation(methodParameter);
+				
 				continue;
 			}
+			
 			String name = selectBestParameterName(methodParameter);
 			val allowableValues = convertToAllowableValues(apiParam.allowableValues());
 			String description = apiParam.value();
+			
 			if (StringUtils.isEmpty(name))
 				name = methodParameter.getParameterName();
-			String paramType = "path";
+			
 			String dataType = methodParameter.getParameterType().getSimpleName();
 			DocumentationParameter documentationParameter = new DocumentationParameter(name, description, apiParam.internalDescription(),
 								paramType,apiParam.defaultValue(), allowableValues,apiParam.required(),apiParam.allowMultiple());
@@ -130,7 +137,7 @@ public class ApiMethodReader {
 		String name = selectBestParameterName(methodParameter);
 		String dataType = methodParameter.getParameterType().getSimpleName();
 		String paramType = "path";
-		DocumentationParameter documentationParameter = new DocumentationParameter(name, "", "",	paramType,"", null, true, false);
+		DocumentationParameter documentationParameter = new DocumentationParameter(name, "", "", paramType, "", null, true, false);
 		documentationParameter.setDataType(dataType);
 		parameters.add(documentationParameter);
 	}

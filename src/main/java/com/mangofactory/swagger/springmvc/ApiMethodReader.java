@@ -38,6 +38,9 @@ public class ApiMethodReader {
 	private Class<?> responseClass;
 	@Getter
 	private String tags;
+	@Getter
+	private String responseClazz;
+	
 	private String nickname;
 
 	private boolean deprecated;
@@ -59,6 +62,7 @@ public class ApiMethodReader {
 			summary = apiOperation.value();
 			notes = apiOperation.notes();
 			tags = apiOperation.tags();
+			responseClazz = apiOperation.responseClass();
 		}
 		nickname = handlerMethod.getMethod().getName();
 		deprecated = handlerMethod.getMethodAnnotation(Deprecated.class) != null;
@@ -67,6 +71,7 @@ public class ApiMethodReader {
 	public DocumentationOperation getOperation(RequestMethod requestMethod) {
 		DocumentationOperation operation = new DocumentationOperation(requestMethod.name(),summary,notes);
 		operation.setDeprecated(deprecated);
+		operation.setResponseClass(responseClazz);
 		operation.setNickname(nickname);
 		for (DocumentationParameter parameter : parameters)
 			operation.addParameter(parameter);

@@ -91,8 +91,15 @@ public class ApiMethodReader {
 		{
 			ApiParam apiParam = methodParameter.getParameterAnnotation(ApiParam.class);
 			RequestParam requestParam = methodParameter.getParameterAnnotation(RequestParam.class);
-			
-			String paramType = (requestParam == null ? "path" : "query");
+			PathVariable pathVariable = methodParameter.getParameterAnnotation(PathVariable.class);
+
+			String paramType = "body";
+
+			if (requestParam != null)
+				paramType = "query";
+
+			if (pathVariable != null)
+				paramType = "path";
 
 			if (apiParam == null) {
 				log.warn("{} is missing @ApiParam annotation - so generating default documentation", 
